@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+
+  <style>
+     @keyframes mask{
+        0% {-webkit-mask-position:0px 0px;}
+        25% {-webkit-mask-position:619px 0px;}
+        50% {-webkit-mask-position:0px 0px;}
+        75% {-webkit-mask-position:308px 0px;-webkit-mask-size:100%;}
+        100% {-webkit-mask-size:1000%;}
+     }
+
+    .mask{
+        width:700px;
+        height:392px;
+        background:black url("./1534750163.jpg");
+        /* mask-image: url("./1534750222.jpg"); */
+        -webkit-mask-image:url("./1534750222.jpg");
+        animation:mask 5s linear infinite forwards;
+    }
+  </style>
+ </head>
+ <body>
+    <div class="mask"> </div>
+    <img src="./1534750163.jpg">
+ </body>
+
+</html>

@@ -35,6 +35,30 @@ def video_stream():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + global_frame + b'\r\n\r\n')
 
+# 获取掩码
+def video_stream_mask():
+    global video_camera
+    global global_frame
+    if video_camera is None:
+        video_camera = VideoCamera()
+
+    while True:
+        
+        frame = video_camera.get_mask()
+        if(frame is None):
+            continue
+        if global_frame is None:
+            global_frame = b""
+
+        if frame is not None:
+            global_frame = frame
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        else:
+        
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + global_frame + b'\r\n\r\n')
+
 
 # 视频流
 @home_blu.route('/video_viewer')
@@ -44,4 +68,14 @@ def video_viewer():
     if not username:
         return redirect(url_for("user.login"))
     return Response(video_stream(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# 掩码视频流
+@home_blu.route('/video_viewer_mask')
+def video_viewer_mask():
+    # 模板渲染
+    username = session.get("username")
+    if not username:
+        return redirect(url_for("user.login"))
+    return Response(video_stream_mask(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
