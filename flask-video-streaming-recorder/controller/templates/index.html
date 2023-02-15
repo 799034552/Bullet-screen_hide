@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>监控系统</title>
+    <style>
+        body {
+            background-color: #484856;
+        }
+
+    </style>
+</head>
+<body>
+<h1 align="center" style="color: whitesmoke;">视频流媒体直播</h1>
+<div class="top">
+    <!-- <div class="recorder" id="recorder" align="center">
+        <button id="record" class="btn">录制视频</button>
+        <button id="stop" class="btn">暂停录制</button>
+        <input type="button" class="btn" value="退出登录"
+               onclick="javascrtpt:window.location.href='{{ url_for('user.logout') }}'">
+        <a id="download"></a>
+        <script type="text/javascript" src="{{ url_for('static', filename='recorder.js') }}"></script>
+    </div> -->
+</div>
+<div class="main">
+    <div class="play">
+        <img id="video" src="{{ url_for('home.video_viewer') }}">
+        <!-- <img id="video" src="../static/123.jpg"> -->
+        <div class="barrage">
+            <!-- <div class ="barrage-item">我是弹幕</div>
+            <div class="col">
+                
+                模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕
+                模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕
+                模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕模拟弹幕
+            </div> -->
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+<script>
+    let barrage_text_list = [
+        "真的太强了",
+        "666",
+        "主播加油",
+        "下饭操作",
+        "扣1送地狱火"
+    ]
+    const get_text = () => {
+        return barrage_text_list[Math.floor(Math.random() * barrage_text_list.length)]
+    }
+    const get_random_space = (a, b) => {
+        let N = Math.floor(Math.random() * b) + a
+        let res = ""
+        while(N--) {
+            res += "&nbsp;"
+        }
+        return res
+    }
+    barrage_height = 40
+    const append_barrage = () => {
+        barrage_line_list = document.querySelectorAll(".barrage-line")
+        const w = document.querySelector("#video").clientWidth
+        for(let i = 0; i < barrage_line_list.length; i++) {
+            let barrage = document.createElement("p")
+            barrage.className = "barrage-item"
+            barrage_line_list[i].appendChild(barrage)
+            while(barrage.clientWidth < w*2) {
+                barrage.innerHTML += get_text() + get_random_space(0,10)
+                // console.log(barrage.clientWidth)
+            }
+        }
+        
+        
+        
+        
+
+        
+    }
+    const start = () => {
+        document.querySelector(".barrage").style.height = document.querySelector("#video").clientHeight + "px"
+        document.querySelector(".barrage").style.width = document.querySelector("#video").clientWidth + "px"
+        total_height = document.querySelector("#video").clientHeight
+        n = Math.floor(total_height / barrage_height)
+        for(let i = 0; i < n; ++i) {
+            barrage_line = document.createElement("div")
+            barrage_line.className = "barrage-line"
+            barrage_line.style.height = barrage_height + "px"
+            document.querySelector(".barrage").appendChild(barrage_line)
+        }
+        append_barrage()
+    }
+    window.onload = () => {
+        if (document.querySelector("#video").clientHeight !== 0) {
+            start()
+        } else {
+            timer = setInterval(()=> {
+                if (document.querySelector("#video").clientHeight !== 0) {
+                    clearInterval(timer)
+                }
+                start()
+            }, 500)
+        }
+    }
+</script>
+<style>
+    * {
+        padding:0;
+        margin: 0;
+    }
+    .main {
+        text-align: center;
+    }
+    .play {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+        display: inline-block;
+    }
+    #video {
+        position: absolute;
+        left: 0;
+        top:0;
+        width: 70vw;
+    }
+    #video_mask {
+        position: absolute;
+    }
+    .barrage {
+        left: 0;
+        top:0;
+        position:relative;
+        -webkit-mask-image: url("{{ url_for('home.video_viewer_mask') }}");
+        /* -webkit-mask-image: url("../static/tt.png"); */
+        -webkit-mask-size: 100% 100%;
+        overflow:hidden
+    }
+    .col {
+        position: relative;
+        top:50%;
+        height: 20%;
+        background: red;
+    }
+    .barrage-line {
+        text-align: left;
+    }
+    @keyframes barrage{
+        from{
+            left:100%;
+            transform:translateX(0);
+        }
+        to{
+            left:0;
+            transform:translateX(-100%);
+        }
+    }
+    .barrage-item {
+        position: absolute;
+        color: white;
+        white-space:nowrap;
+        animation:barrage 20s linear 0s infinite;
+        font-size: 20px;
+        text-shadow: 0 1px black, 1px 0 black, -1px 0 black, 0 -1px black;
+    }
+</style>
+
+</html>
